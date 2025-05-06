@@ -23,6 +23,9 @@ export type MinigameTheme = {
 
   // Visual settings
   backgroundOverlayColor?: string;
+
+  // Player overlay image
+  playerOverlayImage?: string;
 };
 
 export type GenericMinigameProps = {
@@ -120,6 +123,20 @@ export default function GenericMinigame({ theme }: GenericMinigameProps) {
   const setFacingDirection = useGameStore((s) => s.setFacingDirection);
   const previousMouseX = useGameStore((s) => s.previousMouseX);
   const setPreviousMouseX = useGameStore((s) => s.setPreviousMouseX);
+
+  // Player overlay image (e.g., toilet paper)
+  const playerOverlayImageRef = useRef<HTMLImageElement | null>(null);
+  useEffect(() => {
+    if (theme.playerOverlayImage) {
+      const overlayImg = new Image();
+      overlayImg.src = theme.playerOverlayImage;
+      overlayImg.onload = () => {
+        playerOverlayImageRef.current = overlayImg;
+      };
+    } else {
+      playerOverlayImageRef.current = null;
+    }
+  }, [theme.playerOverlayImage]);
 
   // Set canvas size to window size
   useEffect(() => {
@@ -647,6 +664,19 @@ export default function GenericMinigame({ theme }: GenericMinigameProps) {
           playerWidth,
           playerHeight
         );
+        // Draw overlay image (e.g., toilet paper) in hand
+        if (playerOverlayImageRef.current) {
+          // Offset: right hand (mirrored)
+          const overlayW = playerWidth * 0.45;
+          const overlayH = playerHeight * 0.45;
+          ctx.drawImage(
+            playerOverlayImageRef.current,
+            -(playerX + playerWidth / 2 - shakeX) + playerWidth * 0.45,
+            canvasSize.height - playerHeight + playerHeight * 0.25,
+            overlayW,
+            overlayH
+          );
+        }
         ctx.restore();
       } else {
         ctx.drawImage(
@@ -656,6 +686,19 @@ export default function GenericMinigame({ theme }: GenericMinigameProps) {
           playerWidth,
           playerHeight
         );
+        // Draw overlay image (e.g., toilet paper) in hand
+        if (playerOverlayImageRef.current) {
+          // Offset: left hand
+          const overlayW = playerWidth * 0.45;
+          const overlayH = playerHeight * 0.45;
+          ctx.drawImage(
+            playerOverlayImageRef.current,
+            playerX - playerWidth / 2 + shakeX + playerWidth * 0.1,
+            canvasSize.height - playerHeight + playerHeight * 0.25,
+            overlayW,
+            overlayH
+          );
+        }
       }
       ctx.globalAlpha = 1;
       ctx.restore();
@@ -677,13 +720,24 @@ export default function GenericMinigame({ theme }: GenericMinigameProps) {
           offCtx.fillRect(0, 0, off.width, off.height);
           offCtx.globalCompositeOperation = 'source-over';
           ctx.save();
-          ctx.drawImage(
-            off,
-            playerX - playerWidth / 2 + shakeX,
-            canvasSize.height - playerHeight,
-            playerWidth,
-            playerHeight
-          );
+          if (facingDirection === 'right') {
+            ctx.scale(-1, 1);
+            ctx.drawImage(
+              off,
+              -(playerX + playerWidth / 2 - shakeX),
+              canvasSize.height - playerHeight,
+              playerWidth,
+              playerHeight
+            );
+          } else {
+            ctx.drawImage(
+              off,
+              playerX - playerWidth / 2 + shakeX,
+              canvasSize.height - playerHeight,
+              playerWidth,
+              playerHeight
+            );
+          }
           ctx.restore();
         }
       }

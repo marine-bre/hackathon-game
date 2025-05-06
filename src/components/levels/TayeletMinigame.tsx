@@ -5,7 +5,6 @@ type TayeletMinigameProps = {
   onLose: () => void;
 };
 
-// Old North theme with bicycles as enemies
 const TayeletTheme: MinigameTheme = {
   enemyImage: '/matkot.png', // This would be replaced with a bicycle image
   collectibleImages: {

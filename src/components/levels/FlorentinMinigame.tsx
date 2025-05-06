@@ -10,10 +10,9 @@ const florentinTheme: MinigameTheme = {
   enemyImage: '/drop.png',
   collectibleImages: {
     pita: '/pita.png', // Using falafel.png for both for now
-    falafel: '/falafel.png',
   },
   pointItems: {
-    hummus: '/falafel.png',
+    falafel: '/falafel.png',
   },
   backgroundImage: '/combined_street_panorama.png',
   instructionText: 'Avoid the AC water drops!',

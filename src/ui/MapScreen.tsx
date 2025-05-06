@@ -13,12 +13,12 @@ const TEL_AVIV_BOUNDS = [
 
 const AREA_TO_MINIGAME: Record<string, string> = {
   Florentin: 'Florentin',
-  oldNorth: 'Old North',
+  'Old North': 'Old North',
   Kerem: 'Kerem',
-  'Park Hamesila': 'parkHaMesilah',
+  ParkHamesila: 'parkHaMesilah',
   'Kiryat Hamemshala': 'Kiryat Hamemshala',
   Rothschild: 'rothschild',
-  "Neve Sha'anan": 'tahanaMerkazit',
+  'Tachana Merkazit': 'Tachana Merkazit',
   tayelet: 'tayelet',
   memadion: 'memadion',
 };
@@ -169,12 +169,12 @@ export function MapScreen() {
           // Color map for neighborhoods (high-contrast, varied)
           const AREA_COLORS: Record<string, string> = {
             Florentin: '#FF6B6B', // Vibrant Red
-            oldNorth: '#4ECDC4', // Teal
+            'Old North': '#4ECDC4', // Teal
             Kerem: '#FFD93D', // Bright Yellow
-            'Park Hamesila': '#1A936F', // Deep Green
+            ParkHamesila: '#1A936F', // Deep Green
             Kaplan: '#FF6F91', // Pink
             Rothschild: '#845EC2', // Purple
-            "Neve Sha'anan": '#FF9671', // Orange
+            'Tachana Merkazit': '#FF9671', // Orange
             tayelet: '#0081CF', // Blue
             'Neve Tzedek': '#FFC75F', // Gold
             memadion: '#B0A8B9', // Gray
@@ -258,12 +258,12 @@ export function MapScreen() {
                 click: () => {
                   const validNeighborhoods = [
                     'Florentin',
-                    'oldNorth',
+                    'Old North',
                     'Kerem',
-                    'Park Hamesila',
+                    'ParkHamesila',
                     'Kiryat Hamemshala',
                     'Rothschild',
-                    "Neve Sha'anan",
+                    'Tachana Merkazit',
                     'tayelet',
                     'Neve Tzedek',
                     'memadion',

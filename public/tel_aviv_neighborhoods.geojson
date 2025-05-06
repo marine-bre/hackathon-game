@@ -108,7 +108,7 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "tahanaMerkazit"
+        "name": "Tachana Merkazit"
       },
       "geometry": {
         "coordinates": [
@@ -150,7 +150,7 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "oldNorth"
+        "name": "Old North"
       },
       "geometry": {
         "coordinates": [

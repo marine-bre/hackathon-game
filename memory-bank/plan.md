@@ -190,7 +190,7 @@ This is your roadmap or milestone tracker.
   - 'Florentin': 'Florentin'
   - 'Old North': 'oldNorth'
   - 'Kerem': 'Kerem'
-  - 'Park Hamesila': 'parkHaMesilah'
+  - 'ParkHamesila': 'parkHaMesilah'
   - 'Kaplan': 'kaplan'
   - 'Rothschild': 'rothschild'
   - "Neve Sha'anan": 'tahanaMerkazit'
