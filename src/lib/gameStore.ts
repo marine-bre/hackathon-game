@@ -14,7 +14,8 @@ export type Neighborhood =
   | "Neve Sha'anan"
   | 'tayelet'
   | 'Neve Tzedek'
-  | 'Memadion';
+  | 'Memadion'
+  | 'memadion';
 
 export type Collectible = 'hummus' | 'falafel';
 
