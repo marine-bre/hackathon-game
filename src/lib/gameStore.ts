@@ -9,7 +9,7 @@ export type Neighborhood =
   | 'Old North'
   | 'Kerem'
   | 'Park Hamesila'
-  | 'Kaplan'
+  | 'Kiryat Hamemshala'
   | 'Rothschild'
   | "Neve Sha'anan"
   | 'tayelet'
