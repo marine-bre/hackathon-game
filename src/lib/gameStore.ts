@@ -9,13 +9,16 @@ export type Neighborhood =
   | 'Old North'
   | 'Kerem'
   | 'Park Hamesila'
+  | 'parkHaMesilah'
   | 'Kiryat Hamemshala'
   | 'Rothschild'
+  | 'rothschild'
   | "Neve Sha'anan"
   | 'tayelet'
   | 'Neve Tzedek'
   | 'Memadion'
-  | 'memadion';
+  | 'memadion'
+  | 'levHaIr';
 
 export type Collectible = 'hummus' | 'falafel';
 

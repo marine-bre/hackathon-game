@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useGameStore } from '../lib/gameStore';
+import { useGameStore, Neighborhood } from '../lib/gameStore';
 import { MAPTILER_API_KEY } from '../private/apiKeys';
 import MapScreenOverlay from './MapScreenOverlay';
 
@@ -15,9 +15,9 @@ const AREA_TO_MINIGAME: Record<string, string> = {
   Florentin: 'Florentin',
   'Old North': 'Old North',
   Kerem: 'Kerem',
-  ParkHamesila: 'parkHaMesilah',
+  parkHaMesilah: 'Park Hamesila',
   'Kiryat Hamemshala': 'Kiryat Hamemshala',
-  Rothschild: 'rothschild',
+  rothschild: 'rothschild',
   'Tachana Merkazit': 'Tachana Merkazit',
   tayelet: 'tayelet',
   memadion: 'memadion',
@@ -37,7 +37,7 @@ export function MapScreen() {
     to: [number, number] | null;
     progress: number;
   }>({ from: null, to: null, progress: 0 });
-  const lastNeighborhoodRef = useRef<string | null>(null);
+  const lastNeighborhoodRef = useRef<Neighborhood | null>(null);
   const avatarAnimRef = useRef<number | null>(null);
   const [avatarPos, setAvatarPos] = useState<{ x: number; y: number } | null>(null);
 
@@ -86,7 +86,7 @@ export function MapScreen() {
           });
           return [y / n, x / n]; // [lat, lng]
         };
-        const from = getCentroid(lastNeighborhoodRef.current);
+        const from = getCentroid(lastNeighborhoodRef.current?.name);
         const to = getCentroid(useGameStore.getState().selectedNeighborhood as string);
         if (!from || !to) return;
         setAvatarAnim({ from, to, progress: 0 });
@@ -113,6 +113,39 @@ export function MapScreen() {
       lastNeighborhoodRef.current = useGameStore.getState().selectedNeighborhood;
     }
   }, [gameState]);
+
+  // Dedicated area click handler outside the nested closure
+  const handleAreaClick = (areaName: string) => {
+    const validNeighborhoods = [
+      'Florentin',
+      'Old North',
+      'Kerem',
+      'parkHaMesilah',
+      'Kiryat Hamemshala',
+      'rothschild',
+      'Tachana Merkazit',
+      'tayelet',
+      'Neve Tzedek',
+      'memadion',
+      'levHaIr',
+    ];
+
+    if (
+      areaName &&
+      AREA_TO_MINIGAME[areaName] &&
+      validNeighborhoods.includes(areaName)
+    ) {
+      console.log(`✅ Selected area: ${areaName}`);
+      // Set neighborhood directly
+      setSelectedNeighborhood(areaName as Neighborhood);
+      // Important: Set minigame as well to ensure consistency
+      setSelectedMinigame(AREA_TO_MINIGAME[areaName]);
+      // Change state immediately - no setTimeout
+      setGameState('transition');
+    } else {
+      alert(`No minigame mapped for ${areaName || 'this area'}`);
+    }
+  };
 
   // Map rendering and overlays
   useEffect(() => {
@@ -171,19 +204,20 @@ export function MapScreen() {
             Florentin: '#FF6B6B', // Vibrant Red
             'Old North': '#4ECDC4', // Teal
             Kerem: '#FFD93D', // Bright Yellow
-            ParkHamesila: '#1A936F', // Deep Green
+            parkHaMesilah: '#1A936F', // Deep Green
             Kaplan: '#FF6F91', // Pink
-            Rothschild: '#845EC2', // Purple
+            rothschild: '#845EC2', // Purple
             'Tachana Merkazit': '#FF9671', // Orange
             tayelet: '#0081CF', // Blue
             'Neve Tzedek': '#FFC75F', // Gold
             memadion: '#B0A8B9', // Gray
+            levHaIr: '#A8B0B9', // Light Gray
           };
 
           function style(feature?: { properties?: { name?: string } }) {
             const areaName = feature?.properties?.name;
             const isCompleted = areaName
-              ? completedNeighborhoods.includes(areaName as import('../lib/gameStore').Neighborhood)
+              ? completedNeighborhoods.includes(areaName as Neighborhood)
               : false;
             if (isCompleted) {
               return {
@@ -208,7 +242,7 @@ export function MapScreen() {
             const areaName = (e as { target: { feature?: { properties?: { name?: string } } } })
               .target.feature?.properties?.name;
             const isCompleted = areaName
-              ? completedNeighborhoods.includes(areaName as import('../lib/gameStore').Neighborhood)
+              ? completedNeighborhoods.includes(areaName as Neighborhood)
               : false;
             if (isCompleted) return;
             (e as { target: { setStyle: (opts: unknown) => void } }).target.setStyle({
@@ -221,7 +255,7 @@ export function MapScreen() {
             const areaName = (e as { target: { feature?: { properties?: { name?: string } } } })
               .target.feature?.properties?.name;
             const isCompleted = areaName
-              ? completedNeighborhoods.includes(areaName as import('../lib/gameStore').Neighborhood)
+              ? completedNeighborhoods.includes(areaName as Neighborhood)
               : false;
             if (isCompleted) {
               (e as { target: { setStyle: (opts: unknown) => void } }).target.setStyle({
@@ -246,7 +280,7 @@ export function MapScreen() {
           ) {
             const areaName = feature?.properties?.name;
             const isCompleted = areaName
-              ? completedNeighborhoods.includes(areaName as import('../lib/gameStore').Neighborhood)
+              ? completedNeighborhoods.includes(areaName as Neighborhood)
               : false;
             if (feature.properties && feature.properties.name && layer.bindTooltip) {
               layer.bindTooltip(feature.properties.name, { sticky: true });
@@ -256,29 +290,7 @@ export function MapScreen() {
                 mouseover: highlight,
                 mouseout: reset,
                 click: () => {
-                  const validNeighborhoods = [
-                    'Florentin',
-                    'Old North',
-                    'Kerem',
-                    'ParkHamesila',
-                    'Kiryat Hamemshala',
-                    'Rothschild',
-                    'Tachana Merkazit',
-                    'tayelet',
-                    'Neve Tzedek',
-                    'memadion',
-                  ];
-                  if (
-                    areaName &&
-                    AREA_TO_MINIGAME[areaName] &&
-                    validNeighborhoods.includes(areaName)
-                  ) {
-                    setSelectedNeighborhood(areaName as import('../lib/gameStore').Neighborhood);
-                    setSelectedMinigame(AREA_TO_MINIGAME[areaName]);
-                    setGameState('transition');
-                  } else {
-                    alert(`No minigame mapped for ${areaName || 'this area'}`);
-                  }
+                  handleAreaClick(areaName || '');
                 },
               });
             }
@@ -294,7 +306,7 @@ export function MapScreen() {
           geojson.features.forEach((feature: any) => {
             const areaName = feature?.properties?.name;
             const isCompleted = areaName
-              ? completedNeighborhoods.includes(areaName as import('../lib/gameStore').Neighborhood)
+              ? completedNeighborhoods.includes(areaName as Neighborhood)
               : false;
             if (isCompleted && feature.geometry.type === 'Polygon') {
               // Compute centroid

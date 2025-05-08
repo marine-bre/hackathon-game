@@ -126,39 +126,123 @@
   }
 }
 
-/* Retro HUD styles */
+/* Retro HUD styles - modernized */
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
 .retro-hud {
   font-family: 'Press Start 2P', 'Avenir', monospace;
   text-shadow:
-    2px 2px 0 #222,
-    0 0 8px #fff8,
-    0 0 2px #000a;
+    1px 1px 0 #222,
+    0 0 5px #fff8,
+    0 0 1px #000a;
+  letter-spacing: 0.5px;
 }
 
 .retro-hud-panel {
-  background: rgba(255, 255, 255, 0.92);
-  border: 4px solid #222;
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 2px solid rgba(34, 34, 34, 0.8);
+  border-radius: 12px;
   box-shadow:
-    0 0 0 2px #fff,
-    4px 4px 0 0 #222,
-    0 2px 8px 0 #0004;
-  padding: 0.5em 1.5em;
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
+  padding: 0.5em 1.2em;
   font-family: 'Press Start 2P', 'Avenir', monospace;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   text-shadow:
     0.5px 0.5px 0 #fff,
-    1px 1px 0 #222;
-  filter: contrast(1.1) saturate(1.2);
-  transition: box-shadow 0.2s;
+    1px 1px 0 rgba(34, 34, 34, 0.6);
+  filter: contrast(1.05) saturate(1.05);
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
 }
 
 .retro-hud-panel:active,
 .retro-hud-panel:focus {
   box-shadow:
-    0 0 0 2px #fff,
-    2px 2px 0 0 #222,
-    0 2px 8px 0 #0004;
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.3);
+  transform: translateY(1px);
+}
+
+/* Custom game animations */
+@keyframes scoreFloat {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-80px);
+  }
+}
+
+@keyframes heartPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes heartLoss {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.8);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes timerFlash {
+  0% {
+    box-shadow: 0 0 0 rgba(255, 0, 0, 0);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(255, 0, 0, 0);
+  }
+}
+
+@keyframes screenShake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+.score-float {
+  animation: scoreFloat 1s ease-out forwards;
+}
+
+.heart-pulse {
+  animation: heartPulse 0.6s ease-in-out;
+}
+
+.heart-loss {
+  animation: heartLoss 0.6s ease-in-out forwards;
+}
+
+.timer-flash {
+  animation: timerFlash 0.5s ease-in-out infinite;
+}
+
+.screen-shake {
+  animation: screenShake 0.3s ease-in-out;
 }
