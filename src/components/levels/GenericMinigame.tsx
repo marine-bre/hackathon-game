@@ -30,6 +30,9 @@ export type MinigameTheme = {
 
 export type GenericMinigameProps = {
   theme: MinigameTheme;
+  onWin?: () => void;
+  onLose?: () => void;
+  gameDuration?: number;
 };
 
 const PLAYER_RADIUS = 24;
@@ -42,7 +45,7 @@ const characterImages = {
   hila: '/MOM.png',
 };
 
-export default function GenericMinigame({ theme }: GenericMinigameProps) {
+export default function GenericMinigame({ theme, onWin, onLose, gameDuration }: GenericMinigameProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
   const [playerX, setPlayerX] = useState(0);
@@ -71,6 +74,7 @@ export default function GenericMinigame({ theme }: GenericMinigameProps) {
   } | null>(null);
   const pointItemImagesRef = useRef<Record<string, HTMLImageElement | null>>({});
   const boomImageRef = useRef<HTMLImageElement | null>(null);
+  const [remainingTime, setRemainingTime] = useState(30);
 
   const setGameState = useGameStore((s) => s.setGameState);
   const selectedCharacter = useGameStore((s) => s.selectedCharacter);
@@ -375,48 +379,74 @@ export default function GenericMinigame({ theme }: GenericMinigameProps) {
     );
   }
 
-  // Set minigame start time on mount
-  useEffect(() => {
-    setMinigameStartTime(Date.now());
-  }, [setMinigameStartTime]);
-
-  // Timer logic
-  const [remainingTime, setRemainingTime] = useState(30);
-  useEffect(() => {
-    if (!running) return;
-    const interval = setInterval(() => {
-      const elapsed = (Date.now() - minigameStartTime) / 1000;
-      setRemainingTime(Math.max(0, 30 - elapsed));
-    }, 100);
-    return () => clearInterval(interval);
-  }, [minigameStartTime, running]);
-
   // End minigame after reaching target score or after 30s
   useEffect(() => {
     if (!running) return;
+    
+    const defaultDuration = 30000; // Default to 30 seconds if gameDuration not provided
+    const duration = gameDuration || defaultDuration;
+    
+    if (minigameStartTime === 0) {
+      setMinigameStartTime(Date.now());
+    }
+    
+    // Calculate remaining time
+    const elapsed = Date.now() - minigameStartTime;
+    const remainingTimeInSeconds = Math.max(0, Math.floor((duration - elapsed) / 1000));
+    setRemainingTime(remainingTimeInSeconds);
+    
     if (score >= 100 && selectedNeighborhood) {
       setRunning(false);
       completeNeighborhood(selectedNeighborhood);
-      setTimeout(() => setGameState('map'), 400);
+      
+      // Use onWin callback if provided, otherwise default behavior
+      if (onWin) {
+        setTimeout(() => onWin(), 400);
+      } else {
+        setTimeout(() => setGameState('map'), 400);
+      }
       return;
     }
+    
     if (remainingTime <= 0) {
       setRunning(false);
       // Only complete neighborhood if score threshold met
       if (score >= 100 && selectedNeighborhood) {
         completeNeighborhood(selectedNeighborhood);
       }
-      setTimeout(() => setGameState('map'), 400);
+      
+      // Use onWin/onLose callback if provided, otherwise default behavior
+      if (score >= 100 && onWin) {
+        setTimeout(() => onWin(), 400);
+      } else if (score < 100 && onLose) {
+        setTimeout(() => onLose(), 400);
+      } else {
+        setTimeout(() => setGameState('map'), 400);
+      }
     }
-  }, [remainingTime, running, score, completeNeighborhood, selectedNeighborhood, setGameState]);
+    
+    // Update remaining time regularly
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - minigameStartTime;
+      setRemainingTime(Math.max(0, Math.floor((duration - elapsed) / 1000)));
+    }, 100);
+    
+    return () => clearInterval(interval);
+  }, [running, score, minigameStartTime, setMinigameStartTime, completeNeighborhood, selectedNeighborhood, setGameState, onWin, onLose, gameDuration, remainingTime]);
 
   // Game over if permanentHearts = 0
   useEffect(() => {
     if (health.permanentHearts <= 0) {
       setRunning(false);
-      setTimeout(() => setGameState('gameover'), 400);
+      
+      // Use onLose callback if provided, otherwise default behavior
+      if (onLose) {
+        setTimeout(() => onLose(), 400);
+      } else {
+        setTimeout(() => setGameState('gameover'), 400);
+      }
     }
-  }, [health.permanentHearts, setGameState]);
+  }, [health.permanentHearts, setGameState, onLose]);
 
   // Unified collision check
   function checkCollisions() {

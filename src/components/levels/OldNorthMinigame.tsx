@@ -2,6 +2,11 @@ import GenericMinigame, { MinigameTheme } from './GenericMinigame';
 
 type OldNorthMinigameTheme = MinigameTheme & { playerOverlayImage?: string };
 
+type OldNorthMinigameProps = {
+  onWin: () => void;
+  onLose: () => void;
+};
+
 // Old North theme with bicycles as enemies
 const oldNorthTheme: OldNorthMinigameTheme = {
   enemyImage: '/paper.png',
@@ -22,6 +27,6 @@ const oldNorthTheme: OldNorthMinigameTheme = {
   playerOverlayImage: '/toiletpaper.png',
 };
 
-export default function OldNorthMinigame() {
-  return <GenericMinigame theme={oldNorthTheme} />;
+export default function OldNorthMinigame({ onWin, onLose }: OldNorthMinigameProps) {
+  return <GenericMinigame theme={oldNorthTheme} onWin={onWin} onLose={onLose} />;
 }
