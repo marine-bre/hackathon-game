@@ -44,24 +44,24 @@ const MinigameContainer = ({ onWin, onLose }: MinigameContainerProps) => {
     onWin();
   };
 
-  // Normalize name for comparison (with fallback)
-  const neighborhoodName = selectedNeighborhood ? 
-    selectedNeighborhood.toLowerCase().trim() : 'florentin';
-
-  // Select the appropriate minigame based on the normalized neighborhood
-  if (neighborhoodName.includes('north')) {
-    return <OldNorthMinigame onWin={handleWin} onLose={onLose} />;
-  } else if (neighborhoodName.includes('tayelet')) {
-    return <TayeletMinigame onWin={handleWin} onLose={onLose} />;
-  } else if (neighborhoodName.includes('hamemshala') || neighborhoodName.includes('kirya')) {
-    return <KiryaMinigame onWin={handleWin} onLose={onLose} />;
-  } else if (neighborhoodName.includes('memadion')) {
-    return <MemadionMinigame onWin={handleWin} onLose={onLose} />;
-  } else if (neighborhoodName.includes('hamesila') || neighborhoodName.includes('mesilah') || neighborhoodName.includes('park')) {
-    return <ParkHaMesilahMinigame onWin={handleWin} onLose={onLose} />;
-  } else {
-    // Default to Florentin for any unknown or missing neighborhood
-    return <FlorentinMinigame onWin={handleWin} onLose={onLose} />;
+  // Select the appropriate minigame based on the neighborhood
+  switch (selectedNeighborhood) {
+    case 'Old North':
+      return <OldNorthMinigame onWin={handleWin} onLose={onLose} />;
+    case 'tayelet':
+      return <TayeletMinigame onWin={handleWin} onLose={onLose} />;
+    case 'Kiryat Hamemshala':
+      return <KiryaMinigame onWin={handleWin} onLose={onLose} />;
+    case 'Memadion':
+    case 'memadion':
+      return <MemadionMinigame onWin={handleWin} onLose={onLose} />;
+    case 'Park Hamesila':
+    case 'parkHaMesilah':
+      return <ParkHaMesilahMinigame onWin={handleWin} onLose={onLose} />;
+    case 'Florentin':
+    default:
+      // Default to Florentin for MVP or if neighborhood is not selected
+      return <FlorentinMinigame onWin={handleWin} onLose={onLose} />;
   }
 };
 
